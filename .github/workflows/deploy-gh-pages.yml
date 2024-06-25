@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Quartz - Deploy to GitHub Pages (npm)
 
 on:
   workflow_dispatch:
@@ -12,27 +12,30 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
   build:
-    name: github-pages
-    url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node 18
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm i
       - name: Build site
         run: npm run build
-      - name: Upload artifact
+      - name: Upload _site
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
